@@ -110,7 +110,12 @@ int input_threshold(){
             cin >> cmd;
             int n = stoi(cmd);
 
-            return n;
+            if(n >= 0 && n <= 765){
+                return n;
+            }else{
+                cout << endl;
+                cout << "Input tidak sesuai." << endl;
+            }
         }catch(...){
             cout << endl;
             cout << "Input tidak sesuai." << endl;
@@ -128,7 +133,12 @@ int input_minimum_block_size(){
             cin >> cmd;
             int n = stoi(cmd);
 
-            return n;
+            if(n >= 1){
+                return n;
+            }else{
+                cout << endl;
+                cout << "Input tidak sesuai." << endl;
+            }
         }catch(...){
             cout << endl;
             cout << "Input tidak sesuai." << endl;
