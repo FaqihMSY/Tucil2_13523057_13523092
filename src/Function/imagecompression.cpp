@@ -167,8 +167,10 @@ cv::Mat compress_image(cv::Mat image, string address, int errorMeasurementMethod
         originalImage.close();
 
         cv::Mat temp = image.clone();
+        cv::Mat optImage = temp.clone();
+        double min = 1.0;
         i = 0;
-        while(l<r && i < 25){
+        while(l<r && i < 20){
 
             temp = image.clone();
             mid = (l+r)/2.0;
@@ -193,10 +195,16 @@ cv::Mat compress_image(cv::Mat image, string address, int errorMeasurementMethod
                 r = mid;
             }
 
+            if(fabs(tempCompressionRatio - compressionPercentage) < min){
+                min = fabs(tempCompressionRatio - compressionPercentage);
+                optImage = temp.clone();
+            }
+
             i+=1;
         }
 
-        image = temp.clone();
+        if(i != 20) image = temp.clone();
+        else image = optImage.clone();
     }
 
     return image;

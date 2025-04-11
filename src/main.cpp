@@ -29,8 +29,8 @@ int main(){
         compressionPercentage = input_compression_percentage();
 
         image = cv::imread(addressOld, cv::IMREAD_COLOR);
-        cv::imshow("Gambar", image);
-        cv::waitKey(0);
+        // cv::imshow("Gambar", image);
+        // cv::waitKey(0);
 
         auto start = high_resolution_clock::now();
 
@@ -50,8 +50,8 @@ int main(){
 
         process_information(duration.count(), addressOld, addressNew);
 
-        cv::imshow("Gambar Terkompres", imageCompressed);
-        cv::waitKey(0);
+        // cv::imshow("Gambar Terkompres", imageCompressed);
+        // cv::waitKey(0);
 
     }
     
