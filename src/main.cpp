@@ -50,8 +50,8 @@ int main(){
 
         process_information(duration.count(), addressOld, addressNew);
 
-        cv::imshow("Gambar Terkompres", imageCompressed);
-        cv::waitKey(0);
+        // cv::imshow("Gambar Terkompres", imageCompressed);
+        // cv::waitKey(0);
 
     }
     
