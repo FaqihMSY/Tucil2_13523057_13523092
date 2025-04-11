@@ -9,7 +9,7 @@ cv::Vec3b average_color(const cv::Mat& image, int x, int y, int width, int heigh
     return cv::Vec3b(sum[0] / totalPixels, sum[1] / totalPixels, sum[2] / totalPixels);
 }
 
-bool is_uniform(const cv::Mat& image, int x, int y, int width, int height, int errorMeasurementMethod, int threshold, cv::Vec3b averageColor){
+bool is_uniform(const cv::Mat& image, int x, int y, int width, int height, int errorMeasurementMethod, double threshold, cv::Vec3b averageColor){
 
     if(errorMeasurementMethod == 1){
 
@@ -99,7 +99,7 @@ bool is_uniform(const cv::Mat& image, int x, int y, int width, int height, int e
     return true;
 }
 
-void quadtree(cv::Mat& image, int width, int height, int errorMeasurementMethod, int threshold, int minBlockSize){
+void quadtree(cv::Mat& image, int width, int height, int errorMeasurementMethod, double threshold, int minBlockSize){
     queue<Node> q;
     q.push({0, 0, width, height, 0}); // x, y, currWidth, currHeight, depthOfVertice
 
@@ -116,20 +116,6 @@ void quadtree(cv::Mat& image, int width, int height, int errorMeasurementMethod,
         verticesCount++;
         if(depthOfVertice > depth){
             depth = depthOfVertice;
-
-            // cv::imwrite("tempImage.png", image);
-            // ifstream tempImage("tempImage.png", ios::binary | ios::ate);
-            // streamsize tempSize = tempImage.tellg();
-            // tempImage.close();
-            // system("del tempImage.png");
-
-            // double tempCompressionRatio = (1.0 - (double) tempSize / imageFileSize);
-            // if(tempCompressionRatio >= compressionPercentage){
-            //     cout << "\n";
-            //     cout << "Kompresi berhenti lebih cepat mengikuti target kompresi!\n";
-            //     depth-=1;
-            //     break;
-            // }
         }
 
         int halfWidth = currWidth / 2;
@@ -153,10 +139,65 @@ void quadtree(cv::Mat& image, int width, int height, int errorMeasurementMethod,
 }
 
 // "PUBLIC"
-cv::Mat compress_image(cv::Mat image, string address, int errorMeasurementMethod, int threshold, int minBlockSize){
+cv::Mat compress_image(cv::Mat image, string address, int errorMeasurementMethod, double threshold, int minBlockSize, double compressionPercentage){
+    
+    cout << "\n";
+    cout << "Mengkompresi..." << endl;
+    
     verticesCount = 0;
     depth = 0;
 
-    quadtree(image, image.cols, image.rows, errorMeasurementMethod, threshold, minBlockSize);
+    if(compressionPercentage == 0){
+        quadtree(image, image.cols, image.rows, errorMeasurementMethod, threshold, minBlockSize);
+    }else{
+        double l = 0.0, r, mid;
+        int i;
+        if(errorMeasurementMethod == 1){
+            r = 10000.0;
+        }else if(errorMeasurementMethod == 2){
+            r = 255.0;
+        }else if(errorMeasurementMethod == 3){
+            r = 765.0;
+        }else if(errorMeasurementMethod == 4){
+            r = 24.0;
+        }
+
+        ifstream originalImage(address, ios::binary | ios::ate);
+        streamsize imageSize = originalImage.tellg();
+        originalImage.close();
+
+        cv::Mat temp = image.clone();
+        i = 0;
+        while(l<r && i < 25){
+
+            temp = image.clone();
+            mid = (l+r)/2.0;
+
+            verticesCount = 0;
+            depth = 0;
+            quadtree(temp, temp.cols, temp.rows, errorMeasurementMethod, mid, minBlockSize);
+
+            cv::imwrite("tempImage.png", temp);
+            ifstream tempImage("tempImage.png", ios::binary | ios::ate);
+            streamsize tempSize = tempImage.tellg();
+            tempImage.close();
+            system("del tempImage.png");
+
+            double tempCompressionRatio = (1.0 - (double) tempSize / (double) imageSize);
+            cout << "\rKompresi " << i+1 << " dengan threshold " << mid << ": " << tempCompressionRatio*100 << "%" << flush;
+            if(tempCompressionRatio - compressionPercentage > -0.005 && tempCompressionRatio - compressionPercentage < 0.005){
+                break;
+            }else if(tempCompressionRatio < compressionPercentage){
+                l = mid + 0.000001;
+            }else{
+                r = mid;
+            }
+
+            i+=1;
+        }
+
+        image = temp.clone();
+    }
+
     return image;
 }

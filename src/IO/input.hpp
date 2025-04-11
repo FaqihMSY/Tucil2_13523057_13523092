@@ -10,7 +10,7 @@ namespace fs = std::filesystem;
 int input_home();
 string input_image_address_import();
 int input_error_measurement_method();
-int input_threshold();
+double input_threshold(int errorMeasurementMethod);
 int input_minimum_block_size();
 double input_compression_percentage();
 string input_image_address_export();

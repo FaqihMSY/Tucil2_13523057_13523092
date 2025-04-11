@@ -8,8 +8,8 @@ using namespace std::chrono;
 
 int main(){
 
-    int cmd, errorMeasurementMethod, threshold, minBlockSize;
-    double compressionPercentage;
+    int cmd, errorMeasurementMethod, minBlockSize;
+    double threshold, compressionPercentage;
     string addressOld, addressNew;
     cv::Mat image, imageCompressed;
 
@@ -24,9 +24,9 @@ int main(){
         
         addressOld = input_image_address_import();
         errorMeasurementMethod = input_error_measurement_method();
-        threshold = input_threshold();
+        threshold = input_threshold(errorMeasurementMethod);
         minBlockSize = input_minimum_block_size();
-        // compressionPercentage = input_compression_percentage();
+        compressionPercentage = input_compression_percentage();
 
         image = cv::imread(addressOld, cv::IMREAD_COLOR);
         cv::imshow("Gambar", image);
@@ -35,7 +35,7 @@ int main(){
         auto start = high_resolution_clock::now();
 
         // BEGIN COMPRESSION
-        imageCompressed = compress_image(image, addressOld, errorMeasurementMethod, threshold, minBlockSize);
+        imageCompressed = compress_image(image, addressOld, errorMeasurementMethod, threshold, minBlockSize, compressionPercentage);
         // END COMPRESSION
 
         auto stop = high_resolution_clock::now();

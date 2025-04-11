@@ -100,7 +100,7 @@ int input_error_measurement_method(){
     }
 }
 
-int input_threshold(){
+double input_threshold(int errorMeasurementMethod){
     string cmd;
 
     while(1){
@@ -108,13 +108,19 @@ int input_threshold(){
 
         try{
             cin >> cmd;
-            int n = stoi(cmd);
+            double n = stod(cmd);
 
-            if(n >= 0 && n <= 765){
+            if(errorMeasurementMethod == 1 && n >= 0){
+                return n;
+            }else if(errorMeasurementMethod == 2 && n >= 0 && n <= 255){
+                return n;
+            }else if(errorMeasurementMethod == 3 && n >= 0 && n <= 765){
+                return n;
+            }else if(errorMeasurementMethod == 4 && n >= 0 && n <= 24){
                 return n;
             }else{
                 cout << endl;
-                cout << "Input tidak sesuai." << endl;
+                cout << "Metode pengukuran eror yang dipilih tidak men-support nilai threshold tersebut." << endl;
             }
         }catch(...){
             cout << endl;

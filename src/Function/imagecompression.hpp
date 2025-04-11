@@ -14,6 +14,6 @@ struct Node{
     int x, y, currWidth, currHeight, depthOfVertice;
 };
 
-cv::Mat compress_image(cv::Mat image, string address, int errorMeasurementMethod, int threshold, int minBlockSize);
+cv::Mat compress_image(cv::Mat image, string address, int errorMeasurementMethod, double threshold, int minBlockSize, double compressionPercentage);
 
 #endif
